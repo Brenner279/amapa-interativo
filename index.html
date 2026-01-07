@@ -125,15 +125,16 @@
       texto.setAttribute('value', dados.txt || '');
 
       // 1. É VIDEO?
-             if (dados.tipo === 'video' && dados.video) {
-         videoEl.setAttribute('src', dados.video);
-         telaVideo.setAttribute('visible', 'true');
-         controles.setAttribute('visible', 'true');
-         
-         // Botão Play Verde e Texto "PLAY"
-         document.getElementById('btn-play-cor').setAttribute('color', 'green');
-         document.getElementById('btn-play-txt').setAttribute('value', 'PLAY');
-             }
+
+      if (dados.tipo === 'video' && dados.video) {
+           videoEl.setAttribute('src', dados.video);
+           telaVideo.setAttribute('visible', 'true');
+           controles.setAttribute('visible', 'true');
+           document.getElementById('vr-texto').setAttribute('visible', 'false');
+           // Inicia pausado para o usuário dar play
+           document.getElementById('txt-btn-play').setAttribute('value', 'PLAY');
+           document.getElementById('btn-play').setAttribute('color', 'green');
+         } 
 
       // 2. É AUDIO?
       else if (dados.tipo === 'audio' && dados.narra) {
@@ -319,6 +320,7 @@
   </a-scene>
 </body>
 </html>
+
 
 
 
