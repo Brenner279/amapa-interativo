@@ -126,7 +126,7 @@
 
       // 1. É VIDEO?
 
-if (dados.video && dados.video.length > 5) {
+if (dados.tipo === 'video' && dados.video) {
            videoEl.setAttribute('src', dados.video);
            telaVideo.setAttribute('visible', 'true');
            controles.setAttribute('visible', 'true');
@@ -319,6 +319,7 @@ if (dados.video && dados.video.length > 5) {
   </a-scene>
 </body>
 </html>
+
 
 
 
