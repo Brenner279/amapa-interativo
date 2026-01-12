@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Amapa Interativo: Com Loading</title>
+  <title>Amapa Interativo: Galeria de Vídeos</title>
   
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-environment-component@1.5.x/dist/aframe-environment-component.min.js"></script>
@@ -15,15 +15,34 @@
         nome: 'Vitoria do Jari',
         bandeira: './assets/imagens/bandeiras/vitoria.png', 
         conteudos: {
-          'Historia': { 
-             t: 'Historia', 
-             video: './assets/videos/vitoria.mp4', 
-             tipo: 'video360' 
+          'Historia': { t: 'Historia', video: './assets/videos/vitoria.mp4', tipo: 'video360' },
+          
+          'Cultura': { 
+              t: 'Galeria Cultural',
+              tipo: 'galeria',
+              itens: [
+                  { img: './assets/imagens/cultura1.png', txt: 'Danca Tradicional' },
+                  { img: './assets/imagens/cultura2.png', txt: 'Artesanato' },
+                  { img: './assets/imagens/cultura3.png', txt: 'Culinaria' },
+                  { img: './assets/imagens/cultura4.png', txt: 'Festividades' }
+              ]
           },
-          'Cultura': { t: 'Cultura', txt: 'Olhe para o PLAY', narra: './assets/audios/vitoria.mp3', tipo: 'audio' },
-          'Turismo': { t: 'Turismo', txt: 'Turismo Local', imagemPainel: './assets/imagens/vitoria.png', tipo: 'imagem' }
+          
+          // --- NOVA ESTRUTURA PARA TURISMO (GALERIA DE VIDEO) ---
+          'Turismo': { 
+              t: 'Pontos Turisticos', 
+              tipo: 'galeriaVideo',
+              itens: [
+                  // Coloque seus videos curtos aqui
+                  { video: './assets/videos/turismo1.mp4', txt: 'Cachoeira do Jari' },
+                  { video: './assets/videos/turismo2.mp4', txt: 'Passeio de Barco' },
+                  { video: './assets/videos/turismo3.mp4', txt: 'Trilha na Mata' },
+                  { video: './assets/videos/turismo4.mp4', txt: 'Centro Historico' }
+              ]
+          }
         }
       },
+      // Outras cidades (resumidas)
       'macapa': { nome: 'Macapa', bandeira: './assets/imagens/bandeiras/macapa.png', conteudos: {} },
       'laranjal do jari': { nome: 'Laranjal do Jari', bandeira: './assets/imagens/bandeiras/laranjal.png', conteudos: {} },
       'oiapoque': { nome: 'Oiapoque', bandeira: './assets/imagens/bandeiras/oiapoque.png', conteudos: {} },
@@ -37,28 +56,22 @@
 
     window.onload = function() {
       gerarMenuCidades();
-      setupVideoEvents(); // Nova função para configurar eventos do vídeo
+      setupVideoEvents();
     };
 
+    /* --- MENU CIDADES --- */
     function gerarMenuCidades() {
       const container = document.getElementById('grade-cidades');
       const chaves = Object.keys(db);
       let col = 0; let row = 0; const chavesPorLinha = 3; 
-
       chaves.forEach((chave) => {
         const cidade = db[chave];
-        const x = (col * 1.3) - 1.3; 
-        const y = 0.8 - (row * 1.0); 
+        const x = (col * 1.3) - 1.3; const y = 0.8 - (row * 1.0); 
         const el = document.createElement('a-entity');
         el.setAttribute('position', `${x} ${y} 0`);
-        
-        // Se a imagem não existir, usa cor sólida
         const imagemSrc = cidade.bandeira ? `src="${cidade.bandeira}"` : 'color="#999"';
-
         el.innerHTML = `
-          <a-plane
-            ${imagemSrc} width="1" height="0.7" class="clicavel interativo"
-            onclick="selecionarCidade('${chave}')" material="shader: flat"
+          <a-plane ${imagemSrc} width="1" height="0.7" class="clicavel interativo" onclick="selecionarCidade('${chave}')" material="shader: flat"
             animation__scale="property: scale; to: 1.1 1.1 1.1; dur: 200; startEvents: mouseenter"
             animation__out="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
           </a-plane>
@@ -69,47 +82,112 @@
       });
     }
 
-    /* --- SETUP DE EVENTOS DE VIDEO (LOADING) --- */
-    function setupVideoEvents() {
-        const video = document.getElementById('video-player');
-        const loader = document.getElementById('loader-360');
-        const controles = document.getElementById('controle-360-gaze');
-        
-        const botao = document.getElementById('btnPlay360');
-        const texto = document.getElementById('btnText360');
+    /* --- GALERIA DE IMAGENS (CULTURA) --- */
+    function montarGaleria(itens) {
+        const container = document.getElementById('container-molduras-cultura');
+        container.innerHTML = ''; 
+        const posicoes = [ { pos: '-2.2 1.6 -2.5', rot: '0 30 0' }, { pos: '-0.8 1.6 -3', rot: '0 10 0' }, { pos: '0.8 1.6 -3', rot: '0 -10 0' }, { pos: '2.2 1.6 -2.5', rot: '0 -30 0' } ];
 
-        // Botão de Play/Pause (Gaze)
-        botao.addEventListener('click', function() {
-            if (video.paused) {
-                video.play();
-                botao.setAttribute('color', '#333'); 
-                texto.setAttribute('value', 'OLHE PARA PAUSAR');
-            } else {
-                video.pause();
-                botao.setAttribute('color', '#EF2D5E');
-                texto.setAttribute('value', 'OLHE PARA TOCAR');
-            }
+        itens.forEach((item, index) => {
+            if(index >= 4) return;
+            const p = posicoes[index];
+            const idTexto = `txt-galeria-${index}`;
+            const el = document.createElement('a-entity');
+            el.setAttribute('position', p.pos);
+            el.setAttribute('rotation', p.rot);
+            const srcAttr = item.img ? `src="${item.img}"` : 'color="#555"';
+
+            el.innerHTML = `
+                <a-plane ${srcAttr} width="1.2" height="0.9" class="clicavel interativo moldura-galeria" data-texto-id="${idTexto}" material="shader: flat; side: double" border="color: #FFD700; width: 0.05"></a-plane>
+                <a-text id="${idTexto}" value="${item.txt}" visible="false" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 -0.6 0" width="2.5" color="#FFD700" shader="msdf">
+                     <a-plane position="0 0 -0.01" width="2.6" height="0.4" color="black" opacity="0.7"></a-plane>
+                </a-text>
+            `;
+            container.appendChild(el);
         });
 
-        // Evento: Quando o video começar a tocar de verdade
-        video.addEventListener('playing', () => {
-            // Esconde o Loading
-            loader.setAttribute('visible', 'false');
-            // Mostra os controles
-            controles.setAttribute('visible', 'true');
-            // Atualiza estado do botão
-            botao.setAttribute('color', '#333'); 
-            texto.setAttribute('value', 'OLHE PARA PAUSAR');
-        });
-
-        // Evento: Se o video travar para carregar (buffer)
-        video.addEventListener('waiting', () => {
-            loader.setAttribute('visible', 'true');
+        document.querySelectorAll('.moldura-galeria').forEach(moldura => {
+            moldura.addEventListener('mouseenter', function() {
+                document.getElementById(this.getAttribute('data-texto-id')).setAttribute('visible', 'true');
+                this.setAttribute('scale', '1.1 1.1 1.1');
+            });
+            moldura.addEventListener('mouseleave', function() {
+                document.getElementById(this.getAttribute('data-texto-id')).setAttribute('visible', 'false');
+                this.setAttribute('scale', '1 1 1');
+            });
         });
     }
 
+    /* --- NOVA FUNÇÃO: GALERIA DE VÍDEOS (TURISMO) --- */
+    function montarGaleriaVideo(itens) {
+        const container = document.getElementById('container-molduras-turismo');
+        container.innerHTML = ''; 
+
+        // Mesmas posições da cultura
+        const posicoes = [ { pos: '-2.2 1.6 -2.5', rot: '0 30 0' }, { pos: '-0.8 1.6 -3', rot: '0 10 0' }, { pos: '0.8 1.6 -3', rot: '0 -10 0' }, { pos: '2.2 1.6 -2.5', rot: '0 -30 0' } ];
+
+        itens.forEach((item, index) => {
+            if(index >= 4) return;
+            const p = posicoes[index];
+            
+            // 1. Configura o player HTML invisível
+            const videoID = `vid-turismo-${index}`;
+            const videoEl = document.getElementById(videoID);
+            
+            if(videoEl && item.video) {
+                videoEl.setAttribute('src', item.video);
+                videoEl.pause(); // Garante que comece pausado
+                videoEl.currentTime = 0;
+            }
+
+            // 2. Cria a moldura 3D ligada a esse video
+            const el = document.createElement('a-entity');
+            el.setAttribute('position', p.pos);
+            el.setAttribute('rotation', p.rot);
+
+            el.innerHTML = `
+                <a-plane 
+                    src="#${videoID}"
+                    width="1.2" height="0.9"
+                    class="clicavel interativo video-moldura"
+                    data-vid-id="${videoID}"
+                    material="shader: flat; side: double"
+                    animation__scale="property: scale; to: 1.1 1.1 1.1; dur: 200; startEvents: mouseenter"
+                    animation__out="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+                </a-plane>
+                
+                <a-text 
+                    value="${item.txt}" 
+                    font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" 
+                    align="center" position="0 -0.6 0" width="3" color="#FFF" shader="msdf">
+                </a-text>
+                
+                <a-text value="(Olhe para tocar)" align="center" position="0 0.6 0" width="2" color="#CCC"></a-text>
+            `;
+            container.appendChild(el);
+        });
+
+        // 3. Adiciona eventos de Hover (Play/Pause)
+        document.querySelectorAll('.video-moldura').forEach(moldura => {
+            moldura.addEventListener('mouseenter', function() {
+                const vid = document.getElementById(this.getAttribute('data-vid-id'));
+                if(vid) vid.play();
+            });
+            moldura.addEventListener('mouseleave', function() {
+                const vid = document.getElementById(this.getAttribute('data-vid-id'));
+                if(vid) {
+                    vid.pause();
+                    vid.currentTime = 0; // Opcional: Volta pro começo ao tirar o mouse
+                }
+            });
+        });
+    }
+
+
+    /* --- NAVEGAÇÃO --- */
     function irPara(idGrupo) {
-      ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player'].forEach(g => {
+      const grupos = ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player', 'grupo-cultura-galeria', 'grupo-turismo-galeria'];
+      grupos.forEach(g => {
         const el = document.getElementById(g);
         el.setAttribute('visible', 'false');
         el.querySelectorAll('.interativo').forEach(b => b.classList.remove('clicavel'));
@@ -136,12 +214,27 @@
       const dados = db[cidadeAtual].conteudos[tipo];
       pararTudo();
 
+      // VIDEO 360
       if (dados.tipo === 'video360') {
           ativarModo360(dados.video);
           return;
       }
+      // GALERIA CULTURA
+      if (dados.tipo === 'galeria') {
+          document.getElementById('titulo-galeria').setAttribute('value', dados.t);
+          montarGaleria(dados.itens);
+          irPara('grupo-cultura-galeria');
+          return;
+      }
+      // NOVO: GALERIA VIDEO TURISMO
+      if (dados.tipo === 'galeriaVideo') {
+          document.getElementById('titulo-turismo').setAttribute('value', dados.t);
+          montarGaleriaVideo(dados.itens);
+          irPara('grupo-turismo-galeria');
+          return;
+      }
 
-      // Player 2D
+      // PLAYER 2D GENERICO
       const controles = document.getElementById('controles-media');
       const tela = document.getElementById('vr-video-screen');
       const img = document.getElementById('vr-imagem-screen');
@@ -161,83 +254,88 @@
       irPara('grupo-player');
     }
 
+    /* --- UTILITARIOS E 360 --- */
+    function setupVideoEvents() {
+        const video = document.getElementById('video-player');
+        const loader = document.getElementById('loader-360');
+        const controles = document.getElementById('controle-360-gaze');
+        const botao = document.getElementById('btnPlay360');
+        const texto = document.getElementById('btnText360');
+
+        botao.addEventListener('click', function() {
+            if (video.paused) { video.play(); botao.setAttribute('color', '#333'); texto.setAttribute('value', 'OLHE PARA PAUSAR'); } 
+            else { video.pause(); botao.setAttribute('color', '#EF2D5E'); texto.setAttribute('value', 'OLHE PARA TOCAR'); }
+        });
+        video.addEventListener('playing', () => { loader.setAttribute('visible', 'false'); controles.setAttribute('visible', 'true'); });
+        video.addEventListener('waiting', () => { loader.setAttribute('visible', 'true'); });
+    }
+
     function ativarModo360(videoSrc) {
-        ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player'].forEach(id => {
+        ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player', 'grupo-cultura-galeria', 'grupo-turismo-galeria'].forEach(id => {
             document.getElementById(id).setAttribute('visible', 'false');
         });
         document.getElementById('ambiente-3d').removeAttribute('environment');
-
         const videoEl = document.getElementById('video-player');
         videoEl.setAttribute('src', videoSrc);
-
         document.getElementById('videosphere').setAttribute('visible', 'true');
-        
-        // --- LÓGICA DE LOADING ---
-        // 1. Mostra o Loading
         document.getElementById('loader-360').setAttribute('visible', 'true');
-        // 2. Esconde os controles temporariamente (só aparecem quando começar a tocar)
         document.getElementById('controle-360-gaze').setAttribute('visible', 'false');
-        
         document.getElementById('btnPlay360').classList.add('clicavel');
         document.getElementById('btnVoltar360').classList.add('clicavel');
-
-        // Tenta dar play (os eventos definidos em setupVideoEvents cuidarão do resto)
-        videoEl.play().catch(e => console.log("Aguardando interação do usuário ou carregamento..."));
+        videoEl.play().catch(e => console.log("Carregando..."));
     }
 
     function desativarModo360() {
         const esfera = document.getElementById('videosphere');
         if (esfera.getAttribute('visible') == false) return; 
-
         pararTudo();
         esfera.setAttribute('visible', 'false');
         document.getElementById('controle-360-gaze').setAttribute('visible', 'false');
-        document.getElementById('loader-360').setAttribute('visible', 'false'); // Garante que loading some
-        
+        document.getElementById('loader-360').setAttribute('visible', 'false');
         document.getElementById('btnPlay360').classList.remove('clicavel');
         document.getElementById('btnVoltar360').classList.remove('clicavel');
     }
-
-    function sairDo360() {
-        desativarModo360();
-        irPara('grupo-categorias');
-    }
+    
+    function sairDo360() { desativarModo360(); irPara('grupo-categorias'); }
 
     function atualizarAmbiente(idGrupo) {
         if(document.getElementById('videosphere').getAttribute('visible') == true) return;
         const el = document.getElementById('ambiente-3d');
         let preset = 'forest';
         if(idGrupo === 'grupo-cidades') preset = 'arches'; 
-        if(idGrupo === 'grupo-categorias') preset = 'volcano';
+        if(idGrupo === 'grupo-cultura-galeria') preset = 'egypt'; 
+        // Ambiente 'yavapai' para turismo (Grand Canyon style)
+        if(idGrupo === 'grupo-turismo-galeria') preset = 'yavapai'; 
         if(idGrupo === 'grupo-player') preset = 'starry';
         el.setAttribute('environment', { preset: preset, grid: 'cross', playArea: 1 });
     }
 
     function pararTudo() {
+      // 1. Para video 360
       const v = document.getElementById('video-player');
       v.pause();
+      // 2. Para Audio
       if(audioNarracao) { audioNarracao.pause(); }
+      // 3. Para videos da galeria de turismo (Importante!)
+      for(let i=0; i<4; i++) {
+          const vid = document.getElementById(`vid-turismo-${i}`);
+          if(vid) vid.pause();
+      }
     }
     
-    function togglePlay2D() {
-       if(audioNarracao) {
-         if(audioNarracao.paused) audioNarracao.play(); else audioNarracao.pause();
-       }
-    }
+    function togglePlay2D() { if(audioNarracao) { if(audioNarracao.paused) audioNarracao.play(); else audioNarracao.pause(); } }
   </script>
 </head>
 <body>
 
   <a-scene>
-
     <a-assets>
-       <video 
-         id="video-player" 
-         loop 
-         crossorigin="anonymous" 
-         playsinline 
-         webkit-playsinline>
-       </video>
+       <video id="video-player" loop crossorigin="anonymous" playsinline webkit-playsinline></video>
+       
+       <video id="vid-turismo-0" loop crossorigin="anonymous" playsinline></video>
+       <video id="vid-turismo-1" loop crossorigin="anonymous" playsinline></video>
+       <video id="vid-turismo-2" loop crossorigin="anonymous" playsinline></video>
+       <video id="vid-turismo-3" loop crossorigin="anonymous" playsinline></video>
     </a-assets>
 
     <a-entity id="ambiente-3d"></a-entity>
@@ -248,11 +346,8 @@
          animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
          animation__mouseleave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 500">
        </a-cursor>
-
         <a-entity id="loader-360" visible="false" position="0 0 -2">
-            <a-text value="CARREGANDO VIDEO..." color="yellow" align="center" width="5"
-                    animation="property: opacity; from: 1; to: 0.5; dir: alternate; loop: true; dur: 800">
-            </a-text>
+            <a-text value="CARREGANDO VIDEO..." color="yellow" align="center" width="5" animation="property: opacity; from: 1; to: 0.5; dir: alternate; loop: true; dur: 800"></a-text>
             <a-plane color="black" opacity="0.7" width="2.5" height="0.5" position="0 0 -0.01"></a-plane>
         </a-entity>
     </a-camera>
@@ -261,7 +356,6 @@
         <a-plane id="btnPlay360" color="#EF2D5E" width="1.5" height="0.5" opacity="0.9">
            <a-text id="btnText360" value="OLHE PARA TOCAR" align="center" width="4"></a-text>
         </a-plane>
-
         <a-plane id="btnVoltar360" position="0 -0.6 0" width="0.8" height="0.3" color="#444" class="clicavel" onclick="sairDo360()">
             <a-text value="SAIR" align="center" width="4"></a-text>
         </a-plane>
@@ -288,12 +382,28 @@
             <a-text value="Historia (360)" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
         </a-plane>
         <a-plane position="0 2 -3" width="1.2" height="0.8" color="#E64A19" class="clicavel interativo" onclick="verConteudo('Cultura')">
-            <a-text value="Cultura" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
+            <a-text value="Cultura (Galeria)" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
         </a-plane>
         <a-plane position="1.2 2 -3" width="1.2" height="0.8" color="#388E3C" class="clicavel interativo" onclick="verConteudo('Turismo')">
-            <a-text value="Turismo" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
+            <a-text value="Turismo (Videos)" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
         </a-plane>
         <a-plane position="1.5 1 -3" width="1" height="0.3" color="#444" class="clicavel interativo" onclick="irPara('grupo-cidades')">
+            <a-text value="VOLTAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center"></a-text>
+        </a-plane>
+    </a-entity>
+
+    <a-entity id="grupo-cultura-galeria" visible="false">
+        <a-text id="titulo-galeria" value="Galeria" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 3 -3" width="8" color="#FFD700"></a-text>
+        <a-entity id="container-molduras-cultura"></a-entity>
+        <a-plane position="0 0.5 -3" width="1" height="0.3" color="#444" class="clicavel interativo" onclick="irPara('grupo-categorias')">
+            <a-text value="VOLTAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center"></a-text>
+        </a-plane>
+    </a-entity>
+
+    <a-entity id="grupo-turismo-galeria" visible="false">
+        <a-text id="titulo-turismo" value="Turismo" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 3 -3" width="8" color="#FFD700"></a-text>
+        <a-entity id="container-molduras-turismo"></a-entity>
+        <a-plane position="0 0.5 -3" width="1" height="0.3" color="#444" class="clicavel interativo" onclick="irPara('grupo-categorias')">
             <a-text value="VOLTAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center"></a-text>
         </a-plane>
     </a-entity>
