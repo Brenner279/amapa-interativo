@@ -1,20 +1,33 @@
-<script>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Amapa Interativo: Bandeiras e 360</title>
+  
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.5.x/dist/aframe-environment-component.min.js"></script>
+  
+  <script>
     /* --- CONFIGURAÇÃO E DADOS --- */
     
     const db = {
       'vitoria': {
         nome: 'Vitoria do Jari',
-        // ADICIONE O CAMINHO DA BANDEIRA AQUI
+        // CAMINHO DA BANDEIRA (Verifique se o arquivo existe)
         bandeira: './assets/bandeiras/vitoria.png', 
         conteudos: {
-          'Historia': { t: 'Historia', video: './assets/videos/vitoria.mp4', tipo: 'video360' },
+          'Historia': { 
+             t: 'Historia', 
+             video: './assets/videos/vitoria.mp4', 
+             tipo: 'video360' 
+          },
           'Cultura': { t: 'Cultura', txt: 'Olhe para o PLAY', narra: './assets/audios/vitoria.mp3', tipo: 'audio' },
           'Turismo': { t: 'Turismo', txt: 'Turismo Local', imagemPainel: './assets/imagens/vitoria.png', tipo: 'imagem' }
         }
       },
       'macapa': { 
           nome: 'Macapa', 
-          bandeira: './assets/bandeiras/macapa.png', // Exemplo
+          bandeira: './assets/bandeiras/macapa.png', 
           conteudos: {} 
       },
       'laranjal do jari': { 
@@ -52,56 +65,35 @@
       setupBotao360();
     };
 
-    function setupBotao360() {
-        const video = document.getElementById('video-player');
-        const botao = document.getElementById('btnPlay360');
-        const texto = document.getElementById('btnText360');
-
-        botao.addEventListener('click', function() {
-            if (video.paused) {
-                video.play();
-                botao.setAttribute('color', '#333'); 
-                texto.setAttribute('value', 'OLHE PARA PAUSAR');
-            } else {
-                video.pause();
-                botao.setAttribute('color', '#EF2D5E');
-                texto.setAttribute('value', 'OLHE PARA TOCAR');
-            }
-        });
-    }
-
-    /* --- SISTEMA DE MENUS ATUALIZADO (VISUAL DE BANDEIRAS) --- */
+    /* --- GERAÇÃO DO MENU COM BANDEIRAS --- */
     function gerarMenuCidades() {
       const container = document.getElementById('grade-cidades');
       const chaves = Object.keys(db);
       
       let col = 0; let row = 0;
-      // Ajustei para 3 cidades por linha e mais espaçamento
       const chavesPorLinha = 3; 
 
       chaves.forEach((chave) => {
         const cidade = db[chave];
         
-        // Ajuste de posição para caber as bandeiras
+        // Espaçamento um pouco maior para caber as bandeiras
         const x = (col * 1.3) - 1.3; 
-        const y = 0.8 - (row * 1.0); // Mais espaço vertical para o texto
+        const y = 0.8 - (row * 1.0); 
         
         const el = document.createElement('a-entity');
         el.setAttribute('position', `${x} ${y} 0`);
         
-        // Se não tiver imagem definida, usa uma cor cinza de fundo
-        const imagemSrc = cidade.bandeira ? `src="${cidade.bandeira}"` : 'color="#CCCCCC"';
-
+        // Se a imagem não carregar, o plane fica branco.
+        // O texto agora fica EMBAIXO da imagem.
         el.innerHTML = `
           <a-plane
-            ${imagemSrc}
+            src="${cidade.bandeira}"
             width="1" height="0.7"
             class="clicavel interativo"
             onclick="selecionarCidade('${chave}')"
-            material="shader: flat" 
+            material="shader: flat"
             animation__scale="property: scale; to: 1.1 1.1 1.1; dur: 200; startEvents: mouseenter"
-            animation__out="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
-          >
+            animation__out="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
           </a-plane>
 
           <a-text 
@@ -109,10 +101,9 @@
             font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" 
             align="center" 
             position="0 -0.5 0" 
-            width="3" 
-            color="#FFF"
-            shader="msdf"
-            negate="false">
+            width="3.5" 
+            color="#FFFFFF"
+            shader="msdf">
           </a-text>
         `;
         container.appendChild(el);
@@ -122,19 +113,24 @@
       });
     }
 
+    /* --- NAVEGAÇÃO --- */
     function irPara(idGrupo) {
+      // 1. Esconde todos os grupos
       ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player'].forEach(g => {
         const el = document.getElementById(g);
         el.setAttribute('visible', 'false');
         el.querySelectorAll('.interativo').forEach(b => b.classList.remove('clicavel'));
       });
 
+      // 2. Desliga modo 360 se estiver ativo
       desativarModo360();
 
+      // 3. Mostra destino
       const destino = document.getElementById(idGrupo);
       destino.setAttribute('visible', 'true');
       destino.querySelectorAll('.interativo').forEach(b => b.classList.add('clicavel'));
 
+      // 4. Atualiza ambiente
       atualizarAmbiente(idGrupo);
       
       if(idGrupo !== 'grupo-player') pararTudo();
@@ -146,17 +142,19 @@
       irPara('grupo-categorias');
     }
 
+    /* --- REPRODUTOR DE CONTEÚDO --- */
     function verConteudo(tipo) {
       if(!db[cidadeAtual].conteudos[tipo]) return;
       const dados = db[cidadeAtual].conteudos[tipo];
       pararTudo();
 
+      // >> VIDEO 360 <<
       if (dados.tipo === 'video360') {
           ativarModo360(dados.video);
           return;
       }
 
-      // Player 2D
+      // >> PLAYER 2D (TV) <<
       const controles = document.getElementById('controles-media');
       const tela = document.getElementById('vr-video-screen');
       const img = document.getElementById('vr-imagem-screen');
@@ -178,24 +176,45 @@
       irPara('grupo-player');
     }
 
+    /* --- MODO 360 (GAZE CONTROL) --- */
+    function setupBotao360() {
+        const video = document.getElementById('video-player');
+        const botao = document.getElementById('btnPlay360');
+        const texto = document.getElementById('btnText360');
+
+        botao.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+                botao.setAttribute('color', '#333'); 
+                texto.setAttribute('value', 'OLHE PARA PAUSAR');
+            } else {
+                video.pause();
+                botao.setAttribute('color', '#EF2D5E');
+                texto.setAttribute('value', 'OLHE PARA TOCAR');
+            }
+        });
+    }
+
     function ativarModo360(videoSrc) {
+        // Esconde interface padrão
         ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player'].forEach(id => {
             document.getElementById(id).setAttribute('visible', 'false');
         });
 
+        // REMOVE AMBIENTE PARA NÃO BLOQUEAR O VÍDEO
         document.getElementById('ambiente-3d').removeAttribute('environment');
 
         const videoEl = document.getElementById('video-player');
         videoEl.setAttribute('src', videoSrc);
 
+        // Ativa VideoSphere e Controles
         document.getElementById('videosphere').setAttribute('visible', 'true');
-        
-        const controle360 = document.getElementById('controle-360-gaze');
-        controle360.setAttribute('visible', 'true');
+        document.getElementById('controle-360-gaze').setAttribute('visible', 'true');
         
         document.getElementById('btnPlay360').classList.add('clicavel');
         document.getElementById('btnVoltar360').classList.add('clicavel');
 
+        // Reseta botão
         const botao = document.getElementById('btnPlay360');
         const texto = document.getElementById('btnText360');
         botao.setAttribute('color', '#EF2D5E');
@@ -221,13 +240,14 @@
         irPara('grupo-categorias');
     }
 
+    /* --- UTILITÁRIOS --- */
     function atualizarAmbiente(idGrupo) {
         if(document.getElementById('videosphere').getAttribute('visible') == true) return;
         
         const el = document.getElementById('ambiente-3d');
         let preset = 'forest';
         
-        if(idGrupo === 'grupo-cidades') preset = 'arches';
+        if(idGrupo === 'grupo-cidades') preset = 'arches'; // Arquitetura combina com museu/galeria
         if(idGrupo === 'grupo-categorias') preset = 'volcano';
         if(idGrupo === 'grupo-player') preset = 'starry';
 
@@ -245,7 +265,111 @@
          if(audioNarracao.paused) audioNarracao.play(); else audioNarracao.pause();
        }
     }
-    function restartMedia() {
-       if(audioNarracao) { audioNarracao.currentTime = 0; audioNarracao.play(); }
-    }
-</script>
+  </script>
+</head>
+<body>
+
+  <a-scene>
+
+    <a-assets>
+       <video 
+         id="video-player" 
+         loop 
+         crossorigin="anonymous" 
+         playsinline 
+         webkit-playsinline>
+       </video>
+    </a-assets>
+
+    <a-entity id="ambiente-3d"></a-entity>
+
+    <a-videosphere id="videosphere" src="#video-player" visible="false" rotation="0 -90 0"></a-videosphere>
+
+    <a-camera>
+       <a-cursor 
+         id="cursor"
+         color="yellow"
+         fuse="true" 
+         fuse-timeout="1500"
+         raycaster="objects: .clicavel" 
+         animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+         animation__mouseleave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 500">
+       </a-cursor>
+    </a-camera>
+
+    <a-entity id="controle-360-gaze" visible="false" position="0 1.6 -2">
+        <a-plane 
+          id="btnPlay360"
+          color="#EF2D5E" 
+          width="1.5" 
+          height="0.5" 
+          opacity="0.9">
+           <a-text id="btnText360" value="OLHE PARA TOCAR" align="center" width="4"></a-text>
+        </a-plane>
+
+        <a-plane 
+            id="btnVoltar360"
+            position="0 -0.6 0"
+            width="0.8" height="0.3"
+            color="#444"
+            class="clicavel"
+            onclick="sairDo360()">
+            <a-text value="SAIR" align="center" width="4"></a-text>
+        </a-plane>
+    </a-entity>
+
+
+    <a-entity id="grupo-inicio" visible="true">
+        <a-text value="Amapa Interativo" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 3 -3" width="10" color="#000000"></a-text>     
+        <a-plane position="0 1.6 -3" width="1.5" height="0.6" color="#004d40" class="clicavel interativo" onclick="irPara('grupo-cidades')">
+            <a-text value="INICIAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
+        </a-plane>
+    </a-entity>
+
+    <a-entity id="grupo-cidades" visible="false">
+        <a-text value="Escolha o Destino" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 3.5 -3" width="8" color="#FFF"></a-text>
+        
+        <a-entity id="grade-cidades" position="0 2 -3"></a-entity>
+
+        <a-plane position="0 0.8 -3" width="1" height="0.4" color="#444" class="clicavel interativo" onclick="irPara('grupo-inicio')">
+            <a-text value="VOLTAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center"></a-text>
+        </a-plane>
+    </a-entity>
+
+    <a-entity id="grupo-categorias" visible="false">
+        <a-text id="titulo-cidade-cat" value="CIDADE" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 3 -3" width="10" color="#FFF" ></a-text>
+        
+        <a-plane position="-1.2 2 -3" width="1.2" height="0.8" color="#004d40" class="clicavel interativo" onclick="verConteudo('Historia')">
+            <a-text value="Historia (360)" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
+        </a-plane>
+        <a-plane position="0 2 -3" width="1.2" height="0.8" color="#E64A19" class="clicavel interativo" onclick="verConteudo('Cultura')">
+            <a-text value="Cultura" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
+        </a-plane>
+        <a-plane position="1.2 2 -3" width="1.2" height="0.8" color="#388E3C" class="clicavel interativo" onclick="verConteudo('Turismo')">
+            <a-text value="Turismo" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" width="6"></a-text>
+        </a-plane>
+
+        <a-plane position="1.5 1 -3" width="1" height="0.3" color="#444" class="clicavel interativo" onclick="irPara('grupo-cidades')">
+            <a-text value="VOLTAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center"></a-text>
+        </a-plane>
+    </a-entity>
+
+    <a-entity id="grupo-player" visible="false">
+        <a-plane position="0 1.5 -3" width="3" height="2.5" color="#111" opacity="0.95"></a-plane>
+        <a-text id="vr-titulo" value="TITULO" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 2.5 -2.9" color="#FFD700" width="4"></a-text>
+        
+        <a-image id="vr-imagem-screen" width="2" height="1" position="0 1.8 -2.9" visible="false"></a-image>
+        
+        <a-entity id="controles-media" position="0 1 -2.9" visible="false">
+             <a-circle radius="0.2" color="green" class="interativo" onclick="togglePlay2D()"></a-circle>
+             <a-text value="PLAY AUDIO" position="-0.5 -0.3 0"></a-text>
+        </a-entity>
+        
+        <a-plane position="0 0.15 -2.9" width="1" height="0.25" color="#444" class="clicavel interativo" onclick="irPara('grupo-categorias')">
+            <a-text value="VOLTAR" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center"></a-text>
+        </a-plane>
+    </a-entity>
+
+  </a-scene>
+</body>
+</html>
