@@ -2,17 +2,15 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Amapa Interativo: 360 Gaze Control</title>
+  <title>Amapa Interativo: Video 360 Corrigido</title>
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-environment-component@1.5.x/dist/aframe-environment-component.min.js"></script>
   
   <script>
-    /* --- DADOS --- */
     const db = {
       'vitoria': {
         nome: 'Vitoria do Jari',
         conteudos: {
-          // Caminho do video 360
           'Historia': { 
              t: 'Historia', 
              video: './assets/videos/vitoria.mp4', 
@@ -22,7 +20,6 @@
           'Turismo': { t: 'Turismo', txt: 'Turismo Local', imagemPainel: './assets/imagens/vitoria.png', tipo: 'imagem' }
         }
       },
-      // Outras cidades...
       'macapa': { nome: 'Macapa', conteudos: {} },
       'laranjal do jari': { nome: 'Laranjal do Jari', conteudos: {} },
       'oiapoque': { nome: 'Oiapoque', conteudos: {} },
@@ -38,7 +35,6 @@
       gerarMenuCidades();
     };
 
-    /* --- SISTEMA DE MENUS --- */
     function gerarMenuCidades() {
       const container = document.getElementById('grade-cidades');
       const chaves = Object.keys(db);
@@ -64,22 +60,18 @@
     }
 
     function irPara(idGrupo) {
-      // 1. Esconde menus padrão
       ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player'].forEach(g => {
         const el = document.getElementById(g);
         el.setAttribute('visible', 'false');
         el.querySelectorAll('.interativo').forEach(b => b.classList.remove('clickable'));
       });
 
-      // 2. Garante que o modo 360 está desligado
       desativarModo360();
 
-      // 3. Mostra destino
       const destino = document.getElementById(idGrupo);
       destino.setAttribute('visible', 'true');
       destino.querySelectorAll('.interativo').forEach(b => b.classList.add('clickable'));
 
-      // 4. Atualiza ambiente
       atualizarAmbiente(idGrupo);
       
       if(idGrupo !== 'grupo-player') pararTudo();
@@ -96,13 +88,11 @@
       const dados = db[cidadeAtual].conteudos[tipo];
       pararTudo();
 
-      // >>> LOGICA DO EXEMPLO PARA 360 <<<
       if (dados.tipo === 'video360') {
           ativarModo360(dados.video);
           return;
       }
 
-      // Player Padrão 2D
       const videoEl = document.getElementById('video-player');
       const telaVideo = document.getElementById('vr-video-screen');
       const imgPainel = document.getElementById('vr-imagem-screen');
@@ -123,39 +113,37 @@
       irPara('grupo-player');
     }
 
-    /* --- LÓGICA DO 360 GAZE CONTROL (Adaptado do seu modelo) --- */
-
+    /* --- CONTROLE DE MODO 360 --- */
     function ativarModo360(videoSrc) {
-        // Esconde interface principal
+        // Esconde menus
         ['grupo-inicio', 'grupo-cidades', 'grupo-categorias', 'grupo-player'].forEach(id => {
             document.getElementById(id).setAttribute('visible', 'false');
             document.getElementById(id).querySelectorAll('.interativo').forEach(b => b.classList.remove('clickable'));
         });
+        
+        // Esconde ambiente (floresta)
         document.getElementById('ambiente-3d').setAttribute('visible', 'false');
 
-        // Configura video
+        // Carrega video
         const videoEl = document.getElementById('video-player');
         videoEl.setAttribute('src', videoSrc);
 
-        // Mostra Esfera e Controles 360
-        document.getElementById('videosphere').setAttribute('visible', 'true');
+        // Mostra ESFERA DE VIDEO
+        const esfera = document.getElementById('esfera-video');
+        esfera.setAttribute('visible', 'true');
         
+        // Mostra controles
         const controle360 = document.getElementById('controle-360-gaze');
         controle360.setAttribute('visible', 'true');
         
-        // Ativa a classe 'clickable' (no seu exemplo era 'clicavel', aqui uso 'clickable' para padronizar com o cursor)
-        const btn = document.getElementById('btnPlay360');
-        const btnVoltar = document.getElementById('btnVoltar360');
-        
-        btn.classList.add('clickable');
-        btnVoltar.classList.add('clickable');
+        document.getElementById('btnPlay360').classList.add('clickable');
+        document.getElementById('btnVoltar360').classList.add('clickable');
 
-        // Reseta estado do botão
         atualizarEstadoBotao360(false); 
     }
 
     function desativarModo360() {
-        const esfera = document.getElementById('videosphere');
+        const esfera = document.getElementById('esfera-video');
         if (esfera.getAttribute('visible') == false) return;
 
         pararTudo();
@@ -163,14 +151,11 @@
         
         const controle360 = document.getElementById('controle-360-gaze');
         controle360.setAttribute('visible', 'false');
-        
         controle360.querySelectorAll('.interativo').forEach(b => b.classList.remove('clickable'));
     }
 
-    // Função disparada pelo FUSE (Gaze)
     function togglePlay360() {
         const video = document.getElementById('video-player');
-        
         if (video.paused) {
             video.play();
             atualizarEstadoBotao360(true);
@@ -185,11 +170,9 @@
         const txt = document.getElementById('btnText360');
 
         if (tocando) {
-            // Modelo: Muda cor para escura e texto para pausar
             btn.setAttribute('color', '#333');
             txt.setAttribute('value', 'OLHE PARA PAUSAR');
         } else {
-            // Modelo: Cor original e texto para tocar
             btn.setAttribute('color', '#EF2D5E');
             txt.setAttribute('value', 'OLHE PARA TOCAR');
         }
@@ -200,10 +183,11 @@
         irPara('grupo-categorias');
     }
 
-    /* --- UTILITARIOS --- */
     function atualizarAmbiente(idGrupo) {
         const ambiente = document.getElementById('ambiente-3d');
-        if(document.getElementById('videosphere').getAttribute('visible') == true) return;
+        // Se a esfera de video estiver ativa, aborta para nao sobrepor
+        if(document.getElementById('esfera-video').getAttribute('visible') == true) return;
+        
         ambiente.setAttribute('visible', 'true');
         
         let preset = 'forest';
@@ -226,12 +210,25 @@
   <a-scene background="color: #111">
 
     <a-assets>
-       <video id="video-player" loop crossorigin="anonymous" playsinline webkit-playsinline></video>
+       <video 
+         id="video-player" 
+         loop 
+         crossorigin="anonymous" 
+         playsinline 
+         webkit-playsinline>
+       </video>
     </a-assets>
 
     <a-entity id="ambiente-3d" environment="preset: forest; groundColor: #445; grid: cross"></a-entity>
 
-    <a-videosphere id="videosphere" src="#video-player" visible="false" rotation="0 -90 0"></a-videosphere>
+    <a-entity 
+      id="esfera-video"
+      geometry="primitive: sphere; radius: 100; segmentsWidth: 64; segmentsHeight: 64"
+      material="shader: flat; src: #video-player; side: back"
+      scale="-1 1 1"
+      rotation="0 -90 0"
+      visible="false">
+    </a-entity>
 
     <a-camera>
        <a-cursor 
@@ -246,7 +243,6 @@
     </a-camera>
 
     <a-entity id="controle-360-gaze" visible="false" position="0 1.6 -2">
-        
         <a-plane 
           id="btnPlay360"
           class="interativo" 
@@ -255,13 +251,7 @@
           height="0.5" 
           opacity="0.9"
           onclick="togglePlay360()">
-           
-           <a-text 
-             id="btnText360" 
-             value="OLHE PARA TOCAR" 
-             align="center" 
-             width="4">
-           </a-text>
+           <a-text id="btnText360" value="OLHE PARA TOCAR" align="center" width="4"></a-text>
         </a-plane>
 
         <a-plane 
@@ -273,7 +263,6 @@
             onclick="sairDo360()">
             <a-text value="SAIR" align="center" width="4"></a-text>
         </a-plane>
-
     </a-entity>
 
 
