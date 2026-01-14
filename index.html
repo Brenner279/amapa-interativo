@@ -104,9 +104,8 @@
             animation__out="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
              <a-plane position="0 0 -0.01" width="1.05" height="0.75" color="#FFD700" material="shader: flat"></a-plane>
           </a-plane>
-          <a-text value="${cidade.nome}" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" align="center" position="0 -0.6 0" width="4" color="#FFFFFF" shader="msdf">
-             <a-plane position="0 0 -0.01" width="2" height="0.3" color="black" opacity="0.6"></a-plane>
-          </a-text>
+          <a-text value="${cidade.nome}" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" align="center" position="0 -0.6 0" width="4" color="#FFFFFF" shader="msdf">
+                      </a-text>
         `;
         container.appendChild(el);
       });
@@ -300,8 +299,8 @@
        <video id="vid-turismo-2" loop crossorigin="anonymous" playsinline></video>
        <video id="vid-turismo-3" loop crossorigin="anonymous" playsinline></video>
        <audio id="audio-hino" loop></audio>
-       <img id="img-inicio-esq" src="./assets/imagens/inicio_esq.png">
-       <img id="img-inicio-dir" src="./assets/imagens/inicio_dir.png">
+       <img id="img-inicio-esq" src="./assets/imagens/amapa.png">
+       <img id="img-inicio-dir" src="./assets/imagens/mapa.png">
     </a-assets>
 
     <a-entity id="ambiente-3d" environment="preset: forest; groundColor: #445; grid: cross"></a-entity>
@@ -395,5 +394,6 @@
   </a-scene>
 </body>
 </html>
+
 
 
