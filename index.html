@@ -13,8 +13,8 @@
     const db = {
       'vitoria': {
         nome: 'Vitoria do Jari',
-        bandeira: './assets/imagens/bandeiras/vitoria.png',
-        hino: './assets/audios/hino_vitoria.mp3', 
+        bandeira: './assets/bandeiras/vitoria.png',
+        hino: './assets/hinos/vitoria.mp3', 
         conteudos: {
           'Historia': { t: 'Historia', video: './assets/videos/vitoria.mp4', tipo: 'video360' },
           'Cultura': { 
@@ -36,12 +36,31 @@
         }
       },
       // Adicione a propriedade 'hino' nas outras cidades
-      'macapa': { nome: 'Macapa', bandeira: './assets/imagens/bandeiras/macapa.png', hino: './assets/audios/hino_macapa.mp3', conteudos: {} },
-      'laranjal do jari': { nome: 'Laranjal do Jari', bandeira: './assets/imagens/bandeiras/laranjal.png', conteudos: {} },
-      'oiapoque': { nome: 'Oiapoque', bandeira: './assets/imagens/bandeiras/oiapoque.png', conteudos: {} },
-      'serra do navio': { nome: 'Serra do Navio', bandeira: './assets/imagens/bandeiras/serra.png', conteudos: {} },
-      'santana': { nome: 'Santana', bandeira: './assets/imagens/bandeiras/santana.png', conteudos: {} },
-      'amapa': { nome: 'Amapa', bandeira: './assets/imagens/bandeiras/amapa.png', conteudos: {} },
+      'macapa': { nome: 'Macapa', bandeira: './assets/bandeiras/macapa.png', hino: './assets/audios/hino_macapa.mp3', conteudos: {
+          'Historia': { t: 'Historia', video: './assets/videos/vitoria.mp4', tipo: 'video360' },
+          'Cultura': { 
+              t: 'Galeria Cultural', type: 'galeria', itens: [
+                  { img: './assets/imagens/jose.jpg', txt: 'Festividade Sao Jose' },
+                  { img: './assets/imagens/manicoba.jpg', txt: 'Manicoba' },
+                  { img: './assets/imagens/marabaixo.jpg', txt: 'Festividade Marabaixo' },
+                  { img: './assets/imagens/tacaca.jpg', txt: 'Tacaca ' }
+              ]
+          },
+          'Turismo': { 
+              t: 'Pontos Turisticos', type: 'galeriaVideo', itens: [
+                  { video: './assets/videos/balnearo.mp4', txt: 'Balnearo' },
+                  { video: './assets/videos/fortaleza.mp4', txt: 'Fortaleza de Sao Jose' },
+                  { video: './assets/videos/marco.mp4', txt: 'Marco Zero' },
+                  { video: './assets/videos/museu.mp4', txt: 'Museu Sacaca' }
+              ]
+          }
+        }
+      }, },
+      'laranjal do jari': { nome: 'Laranjal do Jari', bandeira: './assets/bandeiras/laranjal.png', conteudos: {} },
+      'oiapoque': { nome: 'Oiapoque', bandeira: './assets/bandeiras/oiapoque.png', conteudos: {} },
+      'serra do navio': { nome: 'Serra do Navio', bandeira: './assets/bandeiras/serra.png', conteudos: {} },
+      'santana': { nome: 'Santana', bandeira: './assets/bandeiras/santana.jpg', conteudos: {} },
+      'amapa': { nome: 'Amapa', bandeira: './assets/bandeiras/amapa.jpg', conteudos: {} },
     };
 
     let cidadeAtual = '';
@@ -376,3 +395,4 @@
   </a-scene>
 </body>
 </html>
+
