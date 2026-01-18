@@ -80,10 +80,10 @@
       const container = document.getElementById('grade-cidades');
       const chaves = Object.keys(db);
       const posicoes = [
-          { pos: '-3.5 1.6 -1.5', rot: '0 60 0' }, { pos: '-2.4 1.6 -2.5', rot: '0 40 0' },
-          { pos: '-1.2 1.6 -3.2', rot: '0 20 0' }, { pos: '0 1.6 -3.5',    rot: '0 0 0' },   
-          { pos: '1.2 1.6 -3.2',  rot: '0 -20 0' }, { pos: '2.4 1.6 -2.5',  rot: '0 -40 0' },
-          { pos: '3.5 1.6 -1.5',  rot: '0 -60 0' }  
+          { pos: '-3.5 1.8 -1.5', rot: '0 60 0' }, { pos: '-2.4 1.8 -2.5', rot: '0 40 0' },
+          { pos: '-1.2 1.8 -3.2', rot: '0 20 0' }, { pos: '0 1.8 -3.5',    rot: '0 0 0' },   
+          { pos: '1.2 1.8 -3.2',  rot: '0 -20 0' }, { pos: '2.4 1.8 -2.5',  rot: '0 -40 0' },
+          { pos: '3.5 1.8 -1.5',  rot: '0 -60 0' }  
       ];
 
       chaves.forEach((chave, index) => {
@@ -233,7 +233,7 @@
         if(document.getElementById('videosphere').getAttribute('visible') == true) return;
         const el = document.getElementById('ambiente-3d');
         let p = 'forest';
-        if(idGrupo === 'grupo-cidades') p = 'arches'; 
+        if(idGrupo === 'grupo-cidades') p = 'threetowers'; 
         if(idGrupo === 'grupo-cultura-galeria') p = 'egypt'; 
         if(idGrupo === 'grupo-turismo-galeria') p = 'yavapai'; 
         if(idGrupo === 'grupo-player') p = 'starry';
@@ -295,7 +295,7 @@
     </a-entity>
 
     <a-entity id="grupo-cidades" visible="false">
-        <a-troika-text value="Escolha o Destino" align="center" position="0 3 -4" width="8"></a-troika-text>
+        <a-troika-text value="Escolha o Destino" align="center" position="0 2.7 -4" width="8" color="	#000000" ></a-troika-text>
         <a-entity id="grade-cidades" position="0 0 0"></a-entity>
         <a-plane position="0 0.5 -3" width="1" height="0.4" color="#444" class="interativo" onclick="irPara('grupo-inicio')">
             <a-troika-text value="VOLTAR" align="center" position="0 0 0.02"></a-troika-text>
