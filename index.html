@@ -201,7 +201,7 @@
     function montarGaleria(itens) {
         const container = document.getElementById('container-molduras-cultura');
         container.innerHTML = ''; 
-        const pos = [ {p: '-2.2 1.6 -2.5', r: '0 30 0'}, {p: '-0.8 1.6 -3', r: '0 10 0'}, {p: '0.8 1.6 -3', r: '0 -10 0'}, {p: '2.2 1.6 -2.5', r: '0 -30 0'} ];
+        const pos = [ {p: '-2.8 1.6 -2.5', r: '0 30 0'}, {p: '-1 1.6 -3', r: '0 10 0'}, {p: '1 1.6 -3', r: '0 -10 0'}, {p: '2.8 1.6 -2.5', r: '0 -30 0'} ];
         itens.forEach((item, index) => {
             if(index >= 4) return;
             const idTexto = `txt-galeria-${index}`;
@@ -209,7 +209,7 @@
             el.setAttribute('position', pos[index].p); el.setAttribute('rotation', pos[index].r);
             const srcAttr = item.img ? `src="${item.img}"` : 'color="#555"';
             el.innerHTML = `
-                <a-plane ${srcAttr} width="1.2" height="0.9" class="clicavel interativo moldura-galeria" data-texto-id="${idTexto}" material="shader: flat; side: double"></a-plane>
+                <a-plane ${srcAttr} width="1.4" height="1" class="clicavel interativo moldura-galeria" data-texto-id="${idTexto}" material="shader: flat; side: double"></a-plane>
                 <a-troika-text id="${idTexto}" value="${item.txt}" visible="false" align="center" position="0 -0.6 0.1" width="2.5" color="#FFD700" outline-width="0.02">
                 </a-troika-text>`;
             container.appendChild(el);
@@ -428,6 +428,7 @@
   </a-scene>
 </body>
 </html>
+
 
 
 
