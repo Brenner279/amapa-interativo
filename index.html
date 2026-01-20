@@ -221,7 +221,7 @@
     function montarGaleriaVideo(itens) {
         const container = document.getElementById('container-molduras-turismo');
         container.innerHTML = ''; 
-        const pos = [ {p: '-2.2 1.6 -2.5', r: '0 30 0'}, {p: '-0.8 1.6 -3', r: '0 10 0'}, {p: '0.8 1.6 -3', r: '0 -10 0'}, {p: '2.2 1.6 -2.5', r: '0 -30 0'} ];
+        const pos = [ {p: '-2.8 1.6 -2.5', r: '0 30 0'}, {p: '-1 1.6 -3', r: '0 10 0'}, {p: '1 1.6 -3', r: '0 -10 0'}, {p: '2.8 1.6 -2.5', r: '0 -30 0'} ];
         itens.forEach((item, index) => {
             if(index >= 4) return;
             const videoID = `vid-turismo-${index}`;
@@ -230,7 +230,7 @@
             const el = document.createElement('a-entity');
             el.setAttribute('position', pos[index].p); el.setAttribute('rotation', pos[index].r);
             el.innerHTML = `
-                <a-plane src="#${videoID}" width="1.2" height="0.9" class="clicavel interativo video-moldura" data-vid-id="${videoID}" material="shader: flat; side: double"></a-plane>
+                <a-plane src="#${videoID}" width="1.6" height="1.1" class="clicavel interativo video-moldura" data-vid-id="${videoID}" material="shader: flat; side: double"></a-plane>
                 <a-troika-text value="${item.txt}" align="center" position="0 -0.6 0.1" width="3" color="#FFF" outline-width="0.02"></a-troika-text>`;
             container.appendChild(el);
         });
@@ -418,7 +418,7 @@
     </a-entity>
 
     <a-entity id="grupo-turismo-galeria" visible="false">
-        <a-troika-text value="Turismo" align="center" position="0 2.3 -3" width="8" color="#FFFFFF" outline-width="0.02" outline-color="#000"></a-troika-text>
+        <a-troika-text value="Turismo" align="center" position="0 2.35 -3" width="8" color="#FFFFFF" outline-width="0.02" outline-color="#000"></a-troika-text>
         <a-entity id="container-molduras-turismo"></a-entity>
         <a-plane position="0 0.5 -3" width="1" height="0.3" color="#444" class="interativo" onclick="voltarParaCategorias()">
             <a-troika-text value="Voltar" align="center" position="0 0 0.02"color="#FFFFFF" outline-width="0.02" outline-color="#000"></a-troika-text>
@@ -428,6 +428,7 @@
   </a-scene>
 </body>
 </html>
+
 
 
 
