@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Amapá Interativo: Versão Final com Imagens</title>
+  <title>Amapá Interativo</title>
   
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-environment-component@1.5.x/dist/aframe-environment-component.min.js"></script>
@@ -15,7 +15,7 @@
       'vitoria': {
         nome: 'Vitória do Jari',
         bandeira: './assets/bandeiras/vitoria.png',
-        hino: './assets/audios/hino_vitoria.mp3', 
+        hino: './assets/hinos/vitoria.mp3', 
         conteudos: {
           'Historia': { t: 'História', video: './assets/videos/vitoria.mp4', tipo: 'video360' },
           'Cultura': { 
@@ -39,7 +39,7 @@
       'macapa': { 
           nome: 'Macapá', 
           bandeira: './assets/bandeiras/macapa.png', 
-          hino: './assets/audios/hino_macapa.mp3', 
+          hino: './assets/hinos/macapa.mp3', 
           conteudos: {
             'Historia': { t: 'História', video: './assets/videos/macapa_historia.mp4', tipo: 'video360' },
             'Cultura': { 
@@ -60,11 +60,103 @@
             }
           }
       },
-      'laranjal do jari': { nome: 'Laranjal do Jari', bandeira: './assets/bandeiras/laranjal.png', conteudos: {} },
-      'oiapoque': { nome: 'Oiapoque', bandeira: './assets/bandeiras/oiapoque.png', conteudos: {} },
-      'serra do navio': { nome: 'Serra do Navio', bandeira: './assets/bandeiras/serra.png', conteudos: {} },
-      'santana': { nome: 'Santana', bandeira: './assets/bandeiras/santana.jpg', conteudos: {} },
-      'amapa': { nome: 'Amapá', bandeira: './assets/bandeiras/amapa.jpg', conteudos: {} }
+      'laranjal do jari': { nome: 'Laranjal do Jari', bandeira: './assets/bandeiras/laranjal.png', 
+                            hino: './assets/hinos/laranjal.mp3', 
+                           conteudos: {
+            'Historia': { t: 'História', video: './assets/videos/macapa_historia.mp4', tipo: 'video360' },
+            'Cultura': { 
+                t: 'Galeria Cultural', type: 'galeria', itens: [
+                    { img: './assets/imagens/jose.jpg', txt: 'Festividade São José' },
+                    { img: './assets/imagens/manicoba.jpg', txt: 'Maniçoba' },
+                    { img: './assets/imagens/marabaixo.jpg', txt: 'Marabaixo' },
+                    { img: './assets/imagens/tacaca.jpg', txt: 'Tacacá' }
+                ]
+            },
+            'Turismo': { 
+                t: 'Pontos Turísticos', type: 'galeriaVideo', itens: [
+                    { video: './assets/videos/balnearo.mp4', txt: 'Balneário' },
+                    { video: './assets/videos/fortaleza.mp4', txt: 'Fortaleza São José' },
+                    { video: './assets/videos/marco.mp4', txt: 'Marco Zero' },
+                    { video: './assets/videos/museu.mp4', txt: 'Museu Sacaca' }
+                ]
+            }
+          } },
+      'oiapoque': { nome: 'Oiapoque', bandeira: './assets/bandeiras/oiapoque.png',  hino: './assets/hinos/oiapoque.mp3',  conteudos: {
+            'Historia': { t: 'História', video: './assets/videos/macapa_historia.mp4', tipo: 'video360' },
+            'Cultura': { 
+                t: 'Galeria Cultural', type: 'galeria', itens: [
+                    { img: './assets/imagens/jose.jpg', txt: 'Festividade São José' },
+                    { img: './assets/imagens/manicoba.jpg', txt: 'Maniçoba' },
+                    { img: './assets/imagens/marabaixo.jpg', txt: 'Marabaixo' },
+                    { img: './assets/imagens/tacaca.jpg', txt: 'Tacacá' }
+                ]
+            },
+            'Turismo': { 
+                t: 'Pontos Turísticos', type: 'galeriaVideo', itens: [
+                    { video: './assets/videos/balnearo.mp4', txt: 'Balneário' },
+                    { video: './assets/videos/fortaleza.mp4', txt: 'Fortaleza São José' },
+                    { video: './assets/videos/marco.mp4', txt: 'Marco Zero' },
+                    { video: './assets/videos/museu.mp4', txt: 'Museu Sacaca' }
+                ]
+            }
+          } },
+      'serra do navio': { nome: 'Serra do Navio', bandeira: './assets/bandeiras/serra.png',  hino: './assets/hinos/serra.mp3',  conteudos: {
+            'Historia': { t: 'História', video: './assets/videos/macapa_historia.mp4', tipo: 'video360' },
+            'Cultura': { 
+                t: 'Galeria Cultural', type: 'galeria', itens: [
+                    { img: './assets/imagens/jose.jpg', txt: 'Festividade São José' },
+                    { img: './assets/imagens/manicoba.jpg', txt: 'Maniçoba' },
+                    { img: './assets/imagens/marabaixo.jpg', txt: 'Marabaixo' },
+                    { img: './assets/imagens/tacaca.jpg', txt: 'Tacacá' }
+                ]
+            },
+            'Turismo': { 
+                t: 'Pontos Turísticos', type: 'galeriaVideo', itens: [
+                    { video: './assets/videos/balnearo.mp4', txt: 'Balneário' },
+                    { video: './assets/videos/fortaleza.mp4', txt: 'Fortaleza São José' },
+                    { video: './assets/videos/marco.mp4', txt: 'Marco Zero' },
+                    { video: './assets/videos/museu.mp4', txt: 'Museu Sacaca' }
+                ]
+            }
+          } },
+      'santana': { nome: 'Santana', bandeira: './assets/bandeiras/santana.jpg', hino: './assets/hinos/santana.mp3',  conteudos: {
+            'Historia': { t: 'História', video: './assets/videos/macapa_historia.mp4', tipo: 'video360' },
+            'Cultura': { 
+                t: 'Galeria Cultural', type: 'galeria', itens: [
+                    { img: './assets/imagens/jose.jpg', txt: 'Festividade São José' },
+                    { img: './assets/imagens/manicoba.jpg', txt: 'Maniçoba' },
+                    { img: './assets/imagens/marabaixo.jpg', txt: 'Marabaixo' },
+                    { img: './assets/imagens/tacaca.jpg', txt: 'Tacacá' }
+                ]
+            },
+            'Turismo': { 
+                t: 'Pontos Turísticos', type: 'galeriaVideo', itens: [
+                    { video: './assets/videos/balnearo.mp4', txt: 'Balneário' },
+                    { video: './assets/videos/fortaleza.mp4', txt: 'Fortaleza São José' },
+                    { video: './assets/videos/marco.mp4', txt: 'Marco Zero' },
+                    { video: './assets/videos/museu.mp4', txt: 'Museu Sacaca' }
+                ]
+            }
+          } },
+      'amapa': { nome: 'Amapá', bandeira: './assets/bandeiras/amapa.jpg',  hino: './assets/hinos/amapa.mp3',  conteudos: {
+            'Historia': { t: 'História', video: './assets/videos/macapa_historia.mp4', tipo: 'video360' },
+            'Cultura': { 
+                t: 'Galeria Cultural', type: 'galeria', itens: [
+                    { img: './assets/imagens/jose.jpg', txt: 'Festividade São José' },
+                    { img: './assets/imagens/manicoba.jpg', txt: 'Maniçoba' },
+                    { img: './assets/imagens/marabaixo.jpg', txt: 'Marabaixo' },
+                    { img: './assets/imagens/tacaca.jpg', txt: 'Tacacá' }
+                ]
+            },
+            'Turismo': { 
+                t: 'Pontos Turísticos', type: 'galeriaVideo', itens: [
+                    { video: './assets/videos/balnearo.mp4', txt: 'Balneário' },
+                    { video: './assets/videos/fortaleza.mp4', txt: 'Fortaleza São José' },
+                    { video: './assets/videos/marco.mp4', txt: 'Marco Zero' },
+                    { video: './assets/videos/museu.mp4', txt: 'Museu Sacaca' }
+                ]
+            }
+          } }
     };
 
     let cidadeAtual = '';
@@ -337,6 +429,7 @@
   </a-scene>
 </body>
 </html>
+
 
 
 
