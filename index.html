@@ -221,7 +221,7 @@
     function montarGaleriaVideo(itens) {
         const container = document.getElementById('container-molduras-turismo');
         container.innerHTML = ''; 
-        const pos = [ {p: '-2.8 1.6 -2', r: '0 30 0'}, {p: '-1 1.6 -1', r: '0 10 0'}, {p: '1 1.6 -1', r: '0 -10 0'}, {p: '2.8 1.6 -2', r: '0 -30 0'} ];
+        const pos = [ {p: '-2.8 1.6 -2', r: '0 30 0'}, {p: '-1 1.6 -3', r: '0 10 0'}, {p: '1 1.6 -3', r: '0 -10 0'}, {p: '2.8 1.6 -2', r: '0 -30 0'} ];
         itens.forEach((item, index) => {
             if(index >= 4) return;
             const videoID = `vid-turismo-${index}`;
@@ -428,6 +428,7 @@
   </a-scene>
 </body>
 </html>
+
 
 
 
