@@ -217,29 +217,56 @@
         setupHoverEvents('.moldura-galeria', 'data-texto-id');
     }
 
-    /* --- GALERIA DE TURISMO (Z-OFFSET CORRIGIDO) --- */
+   /* --- GALERIA DE TURISMO (CORRIGIDA) --- */
     function montarGaleriaVideo(itens) {
         const container = document.getElementById('container-molduras-turismo');
         container.innerHTML = ''; 
         const pos = [ {p: '-2.8 1.6 -2', r: '0 30 0'}, {p: '-1 1.6 -3', r: '0 10 0'}, {p: '1 1.6 -3', r: '0 -10 0'}, {p: '2.8 1.6 -2', r: '0 -30 0'} ];
+        
         itens.forEach((item, index) => {
             if(index >= 4) return;
             const videoID = `vid-turismo-${index}`;
+            const idTexto = `txt-turismo-${index}`; // Criamos um ID para o texto
+            
             const videoEl = document.getElementById(videoID);
-            if(videoEl && item.video) { videoEl.setAttribute('src', item.video); videoEl.pause(); }
+            if(videoEl && item.video) { 
+                videoEl.setAttribute('src', item.video); 
+                videoEl.pause(); 
+            }
+
             const el = document.createElement('a-entity');
-            el.setAttribute('position', pos[index].p); el.setAttribute('rotation', pos[index].r);
+            el.setAttribute('position', pos[index].p); 
+            el.setAttribute('rotation', pos[index].r);
+            
+            // Adicionamos data-texto-id no a-plane e visible="false" no a-troika-text
             el.innerHTML = `
-                <a-plane src="#${videoID}" width="1.8" height="1.2" class="clicavel interativo video-moldura" data-vid-id="${videoID}" material="shader: flat; side: double"></a-plane>
-                <a-troika-text value="${item.txt}" align="center" position="0 -0.8 0.1" width="2" color="#FFF" outline-width="0.02"></a-troika-text>`;
+                <a-plane src="#${videoID}" width="1.8" height="1.2" 
+                         class="clicavel interativo video-moldura" 
+                         data-vid-id="${videoID}" 
+                         data-texto-id="${idTexto}"
+                         material="shader: flat; side: double"></a-plane>
+                <a-troika-text id="${idTexto}" value="${item.txt}" visible="false" 
+                               align="center" position="0 -0.8 0.1" width="2" 
+                               color="#FFF" outline-width="0.02"></a-troika-text>`;
             container.appendChild(el);
         });
+
+        // Atualizamos os eventos para controlar o vídeo E o texto
         document.querySelectorAll('.video-moldura').forEach(m => {
-            m.addEventListener('mouseenter', function() { document.getElementById(this.getAttribute('data-vid-id')).play(); });
-            m.addEventListener('mouseleave', function() { document.getElementById(this.getAttribute('data-vid-id')).pause(); });
+            m.addEventListener('mouseenter', function() { 
+                // Dá play no vídeo
+                document.getElementById(this.getAttribute('data-vid-id')).play(); 
+                // Mostra o texto
+                document.getElementById(this.getAttribute('data-texto-id')).setAttribute('visible', 'true');
+            });
+            m.addEventListener('mouseleave', function() { 
+                // Pausa o vídeo
+                document.getElementById(this.getAttribute('data-vid-id')).pause(); 
+                // Esconde o texto
+                document.getElementById(this.getAttribute('data-texto-id')).setAttribute('visible', 'false');
+            });
         });
     }
-
     /* --- LÓGICA DE NAVEGAÇÃO E ÁUDIO --- */
     function tocarHino(cidadeKey) {
         const hinoEl = document.getElementById('audio-hino');
@@ -428,6 +455,7 @@
   </a-scene>
 </body>
 </html>
+
 
 
 
