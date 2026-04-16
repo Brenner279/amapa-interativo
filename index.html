@@ -13,6 +13,7 @@
     const db = {
       'vitoria': {
         nome: 'Vitória do Jari',
+        fundo360: './assets/3d/praca.jpg'
         bandeira: './assets/bandeiras/vitoria.png',
         hino: './assets/hinos/vitoria.mp3', 
         conteudos: {
@@ -347,18 +348,44 @@
         document.getElementById('loader-360').setAttribute('visible', 'false');
     }
 
-    function atualizarAmbiente(idGrupo) {
+function atualizarAmbiente(idGrupo) {
         if(document.getElementById('videosphere').getAttribute('visible') == true) return;
+        
         const el = document.getElementById('ambiente-3d');
-        let p = 'starry';
-        if(idGrupo === 'grupo-cidades') p = 'threetowers'; 
-        if(idGrupo === 'grupo-cultura-galeria') p = 'threetowers'; 
-        if(idGrupo === 'grupo-turismo-galeria') p = 'contact'; 
-        if(idGrupo === 'grupo-player') p = 'starry';
-        el.setAttribute('environment', { preset: p, grid: 'cross' });
-    }
+        const sky360 = document.getElementById('fundo-360-estatico');
+        
+        // Verifica se a tela atual é interna de uma cidade
+        const telasDaCidade = ['grupo-categorias', 'grupo-cultura-galeria', 'grupo-turismo-galeria'];
+        let usarFoto360 = false;
+        
+        if (cidadeAtual && telasDaCidade.includes(idGrupo)) {
+            const cidade = db[cidadeAtual];
+            // Se a cidade possuir a propriedade fundo360 cadastrada
+            if (cidade && cidade.fundo360) {
+                usarFoto360 = true;
+                // Remove o ambiente gerado (environment) para não sobrepor
+                el.removeAttribute('environment');
+                // Aplica a imagem 360 e a torna visível
+                sky360.setAttribute('src', cidade.fundo360);
+                sky360.setAttribute('visible', 'true');
+            }
+        }
 
-    function pararMidiasConteudo() {
+        // Se não for para usar foto 360 (ex: Menu Principal ou cidade sem foto), usa os ambientes padrão
+        if (!usarFoto360) {
+            sky360.setAttribute('visible', 'false');
+            let p = 'starry';
+            
+            if(idGrupo === 'grupo-inicio') p = 'forest'; // Mantém a floresta no início
+            if(idGrupo === 'grupo-cidades') p = 'threetowers'; 
+            if(idGrupo === 'grupo-cultura-galeria') p = 'threetowers'; 
+            if(idGrupo === 'grupo-turismo-galeria') p = 'contact'; 
+            if(idGrupo === 'grupo-player') p = 'starry';
+            
+            el.setAttribute('environment', { preset: p, grid: 'cross' });
+        }
+    }
+       function pararMidiasConteudo() {
       document.getElementById('video-player').pause();
       for(let i=0; i<4; i++) { if(document.getElementById(`vid-turismo-${i}`)) document.getElementById(`vid-turismo-${i}`).pause(); }
     }
@@ -382,6 +409,7 @@
     </a-assets>
 
     <a-entity id="ambiente-3d" environment="preset: forest"></a-entity>
+    <a-sky id="fundo-360-estatico" visible="false"></a-sky>
     <a-videosphere id="videosphere" src="#video-player" visible="false" rotation="0 -90 0"></a-videosphere>
 
     <a-camera>
